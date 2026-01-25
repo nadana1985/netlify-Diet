@@ -1,0 +1,432 @@
+{
+  "plan_version": "v2.9-clinically-optimized-rasam-specific",
+  "plan_start_date": "2026-01-26",
+  "total_days": 30,
+  "days": [
+    {
+      "day": 1,
+      "type": "veg",
+      "juice": "White pumpkin",
+      "lunch": [
+        "Kerala matta rice",
+        "Sorakkai kootu (with moong dal)",
+        "Jeera–pepper rasam",
+        "1 fully boiled whole egg"
+      ],
+      "dinner": [
+        "Carrot soup",
+        "Grated carrot + cucumber salad"
+      ]
+    },
+    {
+      "day": 2,
+      "type": "fish",
+      "juice": "Pazhaiya kanji (rice water)",
+      "lunch": [
+        "Hand-pounded rice",
+        "Nethili fish kuzhambu (oil-free)"
+      ],
+      "dinner": [
+        "Pudalangai soup",
+        "Ridge gourd salad"
+      ]
+    },
+    {
+      "day": 3,
+      "type": "veg",
+      "juice": "Snake gourd",
+      "lunch": [
+        "Kerala matta rice",
+        "Arai keerai poriyal",
+        "Pepper–garlic rasam",
+        "1 fully boiled whole egg"
+      ],
+      "dinner": [
+        "Plain jeera rasam",
+        "Cucumber salad"
+      ]
+    },
+    {
+      "day": 4,
+      "type": "chicken",
+      "juice": "Mint",
+      "lunch": [
+        "Hand-pounded rice",
+        "Chicken clear gravy (pepper-light)",
+        "Garlic rasam"
+      ],
+      "dinner": [
+        "Cabbage soup",
+        "Steamed brinjal + carrot salad"
+      ]
+    },
+    {
+      "day": 5,
+      "type": "veg-idli",
+      "juice": "Kambu koozh (thin)",
+      "lunch": [
+        "Kerala matta rice",
+        "Parangikkai kootu (with dal)"
+      ],
+      "dinner": [
+        "Idli (1)",
+        "Beetroot soup (small bowl)",
+        "Snake gourd salad"
+      ]
+    },
+    {
+      "day": 6,
+      "type": "fish",
+      "juice": "Amla",
+      "lunch": [
+        "Hand-pounded rice",
+        "Mathi fish kuzhambu"
+      ],
+      "dinner": [
+        "Murungai keerai soup",
+        "Carrot + cucumber salad"
+      ]
+    },
+    {
+      "day": 7,
+      "type": "veg-idli",
+      "juice": "Curry leaves + coriander water",
+      "lunch": [
+        "Kerala matta rice",
+        "Sorakkai poriyal",
+        "Jeera rasam",
+        "1 fully boiled whole egg"
+      ],
+      "dinner": [
+        "Poosanikai soup",
+        "Cucumber salad"
+      ]
+    },
+    {
+      "day": 8,
+      "type": "veg",
+      "juice": "Ash gourd + ginger",
+      "lunch": [
+        "Hand-pounded rice",
+        "Manathakkali keerai poriyal",
+        "Garlic–pepper rasam"
+      ],
+      "dinner": [
+        "Tomato rasam (light)",
+        "Grated carrot salad"
+      ]
+    },
+    {
+      "day": 9,
+      "type": "fish",
+      "juice": "Ilavangapattai (cinnamon) water",
+      "lunch": [
+        "Kerala matta rice",
+        "Ayala fish kuzhambu"
+      ],
+      "dinner": [
+        "Sorakkai soup",
+        "Steamed carrot salad"
+      ]
+    },
+    {
+      "day": 10,
+      "type": "veg",
+      "juice": "Coconut water",
+      "lunch": [
+        "Hand-pounded rice",
+        "Murungakkai sambar",
+        "Jeera–pepper rasam",
+        "1 fully boiled whole egg"
+      ],
+      "dinner": [
+        "Jeera rasam",
+        "Steamed kovakkai + carrot salad"
+      ]
+    },
+    {
+      "day": 11,
+      "type": "chicken",
+      "juice": "Mild ginger water",
+      "lunch": [
+        "Kerala matta rice",
+        "Chicken pepper fry (very light)"
+      ],
+      "dinner": [
+        "Chow chow soup",
+        "Onion + cucumber salad"
+      ]
+    },
+    {
+      "day": 12,
+      "type": "veg-idli",
+      "juice": "White pumpkin + mint",
+      "lunch": [
+        "Hand-pounded rice",
+        "Siru keerai poriyal",
+        "Garlic rasam",
+        "1 fully boiled whole egg"
+      ],
+      "dinner": [
+        "Idli (1)",
+        "Carrot soup"
+      ]
+    },
+    {
+      "day": 13,
+      "type": "fish",
+      "juice": "Snake gourd",
+      "lunch": [
+        "Kerala matta rice",
+        "Vanjaram fish kuzhambu"
+      ],
+      "dinner": [
+        "Parangikkai soup",
+        "Cucumber salad"
+      ]
+    },
+    {
+      "day": 14,
+      "type": "veg-chapati",
+      "juice": "Amla + water",
+      "lunch": [
+        "Hand-pounded rice",
+        "Chena kizhangu (weekly tuber)",
+        "Jeera rasam"
+      ],
+      "dinner": [
+        "Chapati (1)",
+        "Murungakkai soup",
+        "Grated carrot salad"
+      ]
+    },
+    {
+      "day": 15,
+      "type": "veg-idli",
+      "juice": "Mint + lemon",
+      "lunch": [
+        "Kerala matta rice",
+        "Sorakkai kootu (with dal)",
+        "Pepper rasam",
+        "1 fully boiled whole egg"
+      ],
+      "dinner": [
+        "Idli (1)",
+        "Plain jeera rasam",
+        "Ridge gourd salad"
+      ]
+    },
+    {
+      "day": 16,
+      "type": "fish",
+      "juice": "Cucumber + ginger",
+      "lunch": [
+        "Hand-pounded rice",
+        "Pomfret fish kuzhambu"
+      ],
+      "dinner": [
+        "Poosanikai soup",
+        "Carrot salad"
+      ]
+    },
+    {
+      "day": 17,
+      "type": "veg",
+      "juice": "Yellow pumpkin",
+      "lunch": [
+        "Kerala matta rice",
+        "Ponnanganni keerai poriyal",
+        "Garlic–pepper rasam"
+      ],
+      "dinner": [
+        "Beetroot soup (small bowl)",
+        "Cucumber salad"
+      ]
+    },
+    {
+      "day": 18,
+      "type": "chicken",
+      "juice": "Curry leaves + lemon",
+      "lunch": [
+        "Hand-pounded rice",
+        "Air-fried chicken (pepper-light)",
+        "Jeera rasam"
+      ],
+      "dinner": [
+        "Carrot ginger soup",
+        "Onion + tomato salad"
+      ]
+    },
+    {
+      "day": 19,
+      "type": "veg-idli",
+      "juice": "Ash gourd",
+      "lunch": [
+        "Kerala matta rice",
+        "Seppankizhangu poriyal (small portion)",
+        "Pepper rasam"
+      ],
+      "dinner": [
+        "Idli (1)",
+        "Murungai keerai soup"
+      ]
+    },
+    {
+      "day": 20,
+      "type": "fish",
+      "juice": "Lemon water",
+      "lunch": [
+        "Hand-pounded rice",
+        "Nethili fish kuzhambu"
+      ],
+      "dinner": [
+        "Chow chow soup",
+        "Grated carrot salad"
+      ]
+    },
+    {
+      "day": 21,
+      "type": "veg-chapati",
+      "juice": "Coriander + mint",
+      "lunch": [
+        "Kerala matta rice",
+        "Pudalangai poriyal",
+        "Garlic rasam",
+        "1 fully boiled whole egg"
+      ],
+      "dinner": [
+        "Chapati (1)",
+        "Sorakkai soup",
+        "Cucumber salad"
+      ]
+    },
+    {
+      "day": 22,
+      "type": "veg",
+      "juice": "Cucumber",
+      "lunch": [
+        "Hand-pounded rice",
+        "Avarakkai poriyal",
+        "Jeera rasam"
+      ],
+      "dinner": [
+        "Parangikkai soup",
+        "Grated carrot salad"
+      ]
+    },
+    {
+      "day": 23,
+      "type": "chicken",
+      "juice": "White pumpkin",
+      "lunch": [
+        "Kerala matta rice",
+        "Chicken clear gravy",
+        "Pepper rasam"
+      ],
+      "dinner": [
+        "Beetroot soup (small bowl)",
+        "Cucumber salad"
+      ]
+    },
+    {
+      "day": 24,
+      "type": "veg-idli",
+      "juice": "Mint",
+      "lunch": [
+        "Hand-pounded rice",
+        "Parangikkai kootu (with dal)",
+        "Garlic rasam",
+        "1 fully boiled whole egg"
+      ],
+      "dinner": [
+        "Idli (1)",
+        "Murungakkai soup"
+      ]
+    },
+    {
+      "day": 25,
+      "type": "fish",
+      "juice": "Coconut water",
+      "lunch": [
+        "Kerala matta rice",
+        "Mathi fish kuzhambu"
+      ],
+      "dinner": [
+        "Jeera rasam",
+        "Steamed ridge gourd salad"
+      ]
+    },
+    {
+      "day": 26,
+      "type": "veg",
+      "juice": "Snake gourd",
+      "lunch": [
+        "Hand-pounded rice",
+        "Manathakkali keerai poriyal",
+        "Pepper–garlic rasam"
+      ],
+      "dinner": [
+        "Poosanikai soup",
+        "Grated carrot salad"
+      ]
+    },
+    {
+      "day": 27,
+      "type": "veg-idli",
+      "juice": "Amla",
+      "lunch": [
+        "Kerala matta rice",
+        "Kothavarangai poriyal",
+        "Jeera rasam",
+        "1 fully boiled whole egg"
+      ],
+      "dinner": [
+        "Idli (1)",
+        "Carrot soup"
+      ]
+    },
+    {
+      "day": 28,
+      "type": "chicken",
+      "juice": "Cucumber + mint",
+      "lunch": [
+        "Hand-pounded rice",
+        "Chicken pepper fry (light)",
+        "Garlic rasam"
+      ],
+      "dinner": [
+        "Murungai keerai soup",
+        "Cucumber salad"
+      ]
+    },
+    {
+      "day": 29,
+      "type": "fish",
+      "juice": "Yellow pumpkin",
+      "lunch": [
+        "Kerala matta rice",
+        "Ayala fish kuzhambu"
+      ],
+      "dinner": [
+        "Sorakkai soup",
+        "Grated carrot salad"
+      ]
+    },
+    {
+      "day": 30,
+      "type": "veg-chapati",
+      "juice": "Curry leaves",
+      "lunch": [
+        "Hand-pounded rice",
+        "Cabbage poriyal",
+        "Jeera–pepper rasam",
+        "1 fully boiled whole egg"
+      ],
+      "dinner": [
+        "Chapati (1)",
+        "Pudalangai soup",
+        "Cucumber salad"
+      ]
+    }
+  ]
+}

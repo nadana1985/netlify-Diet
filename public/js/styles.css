@@ -1,0 +1,57 @@
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --accent-color: #27ae60;
+    --error-color: #c0392b;
+    --bg-color: #f4f6f7;
+    --card-bg: #ffffff;
+    --header-height: 60px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100dvh; /* Dynamic viewport height for mobile responsiveness */
+    width: 100vw;
+    overflow: hidden; /* STRICT ZERO-SCROLL ENFORCEMENT */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--primary-color);
+    display: flex;
+    flex-direction: column;
+}
+
+#app-root {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Base Utility Classes */
+.hidden { display: none !important; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+/* Forensic Styles */
+:root {
+    --status-success-bg: #d4efdf;
+    --status-success-text: #27ae60;
+    --status-warning-bg: #fbeee6;
+    --status-warning-text: #d35400;
+    --status-error-bg: #fadbd8;
+    --status-error-text: #c0392b;
+    --status-neutral-bg: #ebf5fb;
+    --status-neutral-text: #7f8c8d;
+}
+
+.forensic-container {
+    padding: 15px;
+}
+
+.forensic-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
