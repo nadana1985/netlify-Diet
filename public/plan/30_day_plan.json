@@ -6,7 +6,7 @@
     {
       "day": 1,
       "type": "veg",
-      "juice": "White pumpkin",
+      "juice": "Pazhaiya kanji (rice water)",
       "lunch": [
         "Kerala matta rice",
         "Sorakkai kootu (with moong dal)",
@@ -20,21 +20,8 @@
     },
     {
       "day": 2,
-      "type": "fish",
-      "juice": "Pazhaiya kanji (rice water)",
-      "lunch": [
-        "Hand-pounded rice",
-        "Nethili fish kuzhambu (oil-free)"
-      ],
-      "dinner": [
-        "Pudalangai soup",
-        "Ridge gourd salad"
-      ]
-    },
-    {
-      "day": 3,
       "type": "veg",
-      "juice": "Snake gourd",
+      "juice": "Ash gourd + ginger",
       "lunch": [
         "Kerala matta rice",
         "Arai keerai poriyal",
@@ -44,6 +31,19 @@
       "dinner": [
         "Plain jeera rasam",
         "Cucumber salad"
+      ]
+    },
+    {
+      "day": 3,
+      "type": "fish",
+      "juice": "White pumpkin",
+      "lunch": [
+        "Hand-pounded rice",
+        "Nethili fish kuzhambu (oil-free)"
+      ],
+      "dinner": [
+        "Pudalangai soup",
+        "Ridge gourd salad"
       ]
     },
     {
