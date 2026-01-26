@@ -72,6 +72,11 @@ export class ForensicSection extends Component {
                 const originalText = btnSave.innerText;
                 btnSave.innerText = "✅ Saved";
                 btnSave.style.background = "var(--status-success-text)"; // Green
+
+                // Force refresh of data from store/localstorage to ensure UI binds to latest state
+                // This handles edge cases where the dailyLogs object reference might have drifted
+                this.store.loadDataForDate(date);
+
                 setTimeout(() => {
                     btnSave.innerText = originalText;
                     btnSave.style.background = "";
