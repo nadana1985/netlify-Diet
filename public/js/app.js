@@ -6,6 +6,8 @@ import { ActivitySection } from './components/sections/Activity.js';
 import { ShutdownSection } from './components/sections/Shutdown.js';
 import { ForensicSection } from './components/ForensicSection.js';
 
+import { ShadowSync } from './supabase/shadow-sync.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const root = document.getElementById('app-root');
 
@@ -47,5 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
     root.appendChild(accordionContainer);
     accordion.mount(accordionContainer);
 
+
+    // 4. Start Shadow Persistence
+    ShadowSync.init(store);
 
 });

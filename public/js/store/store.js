@@ -29,6 +29,7 @@ export class Store {
         };
 
         this.listeners = [];
+        this.actionListeners = [];
 
         // Bind Time Engine
         this.timeEngine.subscribe((tickData) => {
@@ -100,6 +101,17 @@ export class Store {
 
     notify(changes) {
         this.listeners.forEach(l => l(this.state, changes));
+    }
+
+    subscribeAction(listener) {
+        this.actionListeners.push(listener);
+        return () => {
+            this.actionListeners = this.actionListeners.filter(l => l !== listener);
+        };
+    }
+
+    notifyAction(action, payload) {
+        this.actionListeners.forEach(l => l(action, payload, this.state));
     }
 
     // Persistence Keys
@@ -255,5 +267,8 @@ export class Store {
         }
 
         if (changes.length > 0) this.notify(changes);
+
+        // Notify action listeners (Shadow Persistence hooks here)
+        this.notifyAction(action, payload);
     }
 }
