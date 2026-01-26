@@ -3,7 +3,7 @@ import { Component } from '../Component.js';
 export class ActivitySection extends Component {
     constructor(store) {
         super(store);
-        this.subscribe(['supportLogs', 'currentTime']);
+        this.subscribe(['supportLogs', 'currentTime', 'meta']);
     }
 
     validateGymTime(start, end) {
@@ -13,6 +13,9 @@ export class ActivitySection extends Component {
     }
 
     onMount() {
+        const { isReadOnly } = this.store.state.meta;
+        if (isReadOnly) return;
+
         // Gym Logic
         const btnGym = this.element.querySelector('#btn-log-gym');
         if (btnGym) {
@@ -52,6 +55,8 @@ export class ActivitySection extends Component {
 
     render() {
         const protos = this.store.state.supportLogs.protocols || {};
+        const { isReadOnly } = this.store.state.meta;
+        const disabledStr = isReadOnly ? 'disabled style="opacity:0.5; pointer-events:none;"' : '';
 
         // 1. Gym
         const gym = protos['gym'] || {};
@@ -64,11 +69,11 @@ export class ActivitySection extends Component {
                 <div class="flex-column">
                     <div style="font-size:0.8rem; color:#95a5a6; margin-bottom:5px;">Window: 09:00 - 10:00</div>
                     <div class="flex-row">
-                        <input type="time" id="gym-start" value="09:00" class="time-input">
+                        <input type="time" id="gym-start" value="09:00" class="time-input" ${disabledStr}>
                         <span style="font-size:0.8rem; margin:0 5px;">to</span>
-                        <input type="time" id="gym-end" value="10:00" class="time-input">
+                        <input type="time" id="gym-end" value="10:00" class="time-input" ${disabledStr}>
                     </div>
-                    <button id="btn-log-gym" class="action-btn" style="width:100%; margin-top:5px; background:#27ae60;">Log Session</button>
+                    <button id="btn-log-gym" class="action-btn" style="width:100%; margin-top:5px; background:#27ae60;" ${disabledStr}>Log Session</button>
                 </div>
              `;
         }
@@ -79,7 +84,7 @@ export class ActivitySection extends Component {
 
         const renderWalk = (w, label, id) => {
             if (w.status === 'COMPLETED') return `<div class="status-badge success">✓ ${label}</div>`;
-            return `<button id="btn-log-${id}" class="sm-btn" style="width:100%; text-align:left;">Log ${label}</button>`;
+            return `<button id="btn-log-${id}" class="sm-btn" style="width:100%; text-align:left;" ${disabledStr}>Log ${label}</button>`;
         };
 
         return `

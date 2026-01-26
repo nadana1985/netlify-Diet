@@ -3,10 +3,13 @@ import { Component } from '../Component.js';
 export class ShutdownSection extends Component {
     constructor(store) {
         super(store);
-        this.subscribe(['supportLogs', 'currentTime']);
+        this.subscribe(['supportLogs', 'currentTime', 'meta']);
     }
 
     onMount() {
+        const { isReadOnly } = this.store.state.meta;
+        if (isReadOnly) return;
+
         // Psyllium
         const btnPsy = this.element.querySelector('#btn-log-psy');
         if (btnPsy) {
@@ -37,6 +40,8 @@ export class ShutdownSection extends Component {
 
     render() {
         const protos = this.store.state.supportLogs.protocols || {};
+        const { isReadOnly } = this.store.state.meta;
+        const disabledStr = isReadOnly ? 'disabled style="opacity:0.5; pointer-events:none;"' : '';
 
         // 1. Psyllium
         const psy = protos['psyllium'] || {};
@@ -44,7 +49,7 @@ export class ShutdownSection extends Component {
         if (psy.status === 'TAKEN') {
             psyHtml = `<div class="status-badge success">✓ Consumed</div>`;
         } else {
-            psyHtml = `<button id="btn-log-psy" class="action-btn" style="background:#8e44ad;">Log Psyllium Husk</button>`;
+            psyHtml = `<button id="btn-log-psy" class="action-btn" style="background:#8e44ad;" ${disabledStr}>Log Psyllium Husk</button>`;
         }
 
         // 2. Sleep
@@ -55,8 +60,8 @@ export class ShutdownSection extends Component {
         } else {
             sleepHtml = `
                 <div class="flex-row">
-                    <input type="time" id="input-bed" value="22:30" class="time-input">
-                    <button id="btn-log-sleep" class="sm-btn">Log Sleep</button>
+                    <input type="time" id="input-bed" value="22:30" class="time-input" ${disabledStr}>
+                    <button id="btn-log-sleep" class="sm-btn" ${disabledStr}>Log Sleep</button>
                 </div>
             `;
         }

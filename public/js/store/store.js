@@ -1,4 +1,6 @@
 import { TimeEngine } from './time-engine.js';
+import { Protocol } from '../layers/protocol.js';
+import { Scoring } from '../layers/scoring.js';
 
 export class Store {
     constructor() {
@@ -16,11 +18,14 @@ export class Store {
             // Plan Data
             plan: null,
 
-            // Meta / Gating
+            // Meta / Scoring
             meta: {
-                requiredTasks: [], // IDs of tasks required TODAY to unlock forensic
-                progressPercent: 0
+                score: { total: 0, breakdown: [], version: 'DWCS_v1' },
+                isReadOnly: false
             },
+
+            // Computed Protocol for Today
+            dailyProtocol: null,
 
             // UI State
             ui: {
@@ -59,6 +64,8 @@ export class Store {
             const res = await fetch('/plan/30_day_plan.json');
             if (res.ok) {
                 this.state.plan = await res.json();
+                // Refresh data to bind Protocol now that plan is available
+                this.loadDataForDate(this.state.biologicalDate);
                 this.notify(['plan']);
             } else {
                 console.error("Failed to load plan");
@@ -130,50 +137,22 @@ export class Store {
         this.state.dailyLogs = dRaw ? JSON.parse(dRaw) : { records: {} };
         this.state.supportLogs = sRaw ? JSON.parse(sRaw) : { protocols: {} };
 
-        // Snapshot Required Tasks for this day
-        this.state.meta.requiredTasks = this.determineRequiredTasks(date);
+        const today = this.timeEngine.getBiologicalDate();
+        this.state.meta.isReadOnly = date < today;
 
-        // Calculate Initial Progress
-        this.calculateProgress();
+        // 1. Get History Context for Protocol (Pure)
+        const history = this.getHistoryContext(date);
 
-        this.notify(['dailyLogs', 'supportLogs', 'meta']);
+        // 2. Determine Protocol
+        this.state.dailyProtocol = Protocol.getRequirements(date, this.state.plan, history);
+
+        // 3. Calculate Score
+        this.calculateScore();
+
+        this.notify(['dailyLogs', 'supportLogs', 'meta', 'dailyProtocol']);
     }
 
-    // Ported Logic: Determine what is required today
-    determineRequiredTasks(dateStr) {
-        // Base Tasks (Daytime)
-        // Sleep is EXCLUDED from gating per user rule.
-        const tasks = ['water', 'gym', 'walking_lunch', 'walking_dinner', 'psyllium'];
-
-        // Coffee Check (3-Day Rule)
-        // Look back d-1, d-2
-        if (this.isCoffeeAllowed(dateStr)) {
-            tasks.push('black_coffee');
-        }
-
-        // Wake logic? Wake is usually required.
-        tasks.push('sleep'); // Wait, "sleep" ID maps to wake_time in Morning.js? 
-        // In Morning.js: id='sleep', data: { wake_time: ... }
-        // In Shutdown.js: id='sleep', data: { bed_time: ... }
-        // We need to differentiate WAKE from BED for gating.
-        // Actually, they share the same protocol ID 'sleep'.
-        // Let's check logic: if 'wake_time' exists, WAKE is done.
-        // If 'bed_time' exists, BED is done.
-        // Required Task: 'wake'. We need to treat them conceptually separate for progress.
-        // Let's use 'wake' as the key for progress tracking, but it checks protocols['sleep'].wake_time.
-
-        // Correcting list:
-        const required = ['wake', 'water', 'gym', 'walking_lunch', 'walking_dinner', 'psyllium'];
-
-        if (this.isCoffeeAllowed(dateStr)) {
-            required.push('black_coffee');
-        }
-
-        return required;
-    }
-
-    isCoffeeAllowed(dateStr) {
-        // Simple lookback
+    getHistoryContext(dateStr) {
         const d = new Date(dateStr);
         const d1 = new Date(d); d1.setDate(d.getDate() - 1);
         const d2 = new Date(d); d2.setDate(d.getDate() - 2);
@@ -184,40 +163,24 @@ export class Store {
         const raw1 = localStorage.getItem(k1);
         const raw2 = localStorage.getItem(k2);
 
-        const log1 = raw1 ? JSON.parse(raw1).protocols['black_coffee'] : {};
-        const log2 = raw2 ? JSON.parse(raw2).protocols['black_coffee'] : {};
-
-        const taken1 = log1 && (log1.status === 'TAKEN' || log1.status === 'VIOLATION');
-        const taken2 = log2 && (log2.status === 'TAKEN' || log2.status === 'VIOLATION');
-
-        if (taken1 || taken2) return false;
-        return true;
+        return {
+            dMinus1: raw1 ? JSON.parse(raw1) : {},
+            dMinus2: raw2 ? JSON.parse(raw2) : {}
+        };
     }
 
-    calculateProgress() {
-        const reqs = this.state.meta.requiredTasks;
-        const protos = this.state.supportLogs.protocols || {};
-
-        let completed = 0;
-        reqs.forEach(task => {
-            let isDone = false;
-
-            if (task === 'wake') {
-                // Check sleep protocol for wake_time
-                if (protos['sleep'] && protos['sleep'].wake_time) isDone = true;
-            } else {
-                const p = protos[task];
-                if (p && (p.status === 'TAKEN' || p.status === 'COMPLETED' || p.status === 'SKIPPED' || p.status === 'VIOLATION')) {
-                    isDone = true;
-                }
-            }
-
-            if (isDone) completed++;
-        });
-
-        this.state.meta.progressPercent = reqs.length > 0 ? Math.floor((completed / reqs.length) * 100) : 100;
-        // No notify here, caller handles it or we do it efficiently
+    calculateScore() {
+        this.state.meta.score = Scoring.calculate(
+            this.state.dailyProtocol,
+            this.state.dailyLogs.records || {},
+            this.state.supportLogs.protocols || {},
+            this.state.meta.isReadOnly // isFinal flag
+        );
     }
+
+    // Removed: determineRequiredTasks
+    // Removed: isCoffeeAllowed (moved to boolean logic in generic GetHistoryContext + Protocol)
+    // Removed: calculateProgress
 
     dispatch(action, payload) {
         let changes = [];
@@ -245,7 +208,9 @@ export class Store {
 
                     localStorage.setItem(this.getSupportKey(date), JSON.stringify(log));
 
-                    this.calculateProgress(); // Re-calc progress
+
+
+                    this.calculateScore(); // Re-calc score
                     changes.push('supportLogs', 'meta');
                 }
                 break;
@@ -261,6 +226,23 @@ export class Store {
 
                     localStorage.setItem(this.getDailyKey(date), JSON.stringify(log));
 
+
+                    this.calculateScore(); // Re-calc score
+                    changes.push('dailyLogs', 'meta');
+                }
+                break;
+
+            case 'LOG_CONTEXT':
+                {
+                    const { date, context } = payload;
+                    // Store context in dailyLogs.meta or similar?
+                    // Proposal: dailyLogs.context = "..."
+                    const log = this.state.dailyLogs;
+                    log.context = context; // Direct string
+                    log.updated_at = new Date().toISOString();
+
+                    localStorage.setItem(this.getDailyKey(date), JSON.stringify(log));
+                    // Context does NOT affect score, but we notify changes
                     changes.push('dailyLogs');
                 }
                 break;

@@ -3,10 +3,12 @@ import { Component } from '../Component.js';
 export class MorningSection extends Component {
     constructor(store) {
         super(store);
-        this.subscribe(['supportLogs', 'currentTime']);
+        this.subscribe(['supportLogs', 'currentTime', 'meta']);
     }
 
     onMount() {
+        const { isReadOnly } = this.store.state.meta;
+        if (isReadOnly) return;
         // Hydration Logic
         const btnWater = this.element.querySelector('#btn-log-water');
         if (btnWater) {
@@ -50,6 +52,8 @@ export class MorningSection extends Component {
     render() {
         const date = this.store.state.biologicalDate;
         const protos = this.store.state.supportLogs.protocols || {};
+        const { isReadOnly } = this.store.state.meta;
+        const disabledStr = isReadOnly ? 'disabled style="opacity:0.5; pointer-events:none;"' : '';
 
         // 1. Water Status
         const water = protos['water'] || {};
@@ -57,7 +61,7 @@ export class MorningSection extends Component {
         if (water.status === 'TAKEN') {
             waterHtml = `<div class="status-badge success">✓ Hydrated</div>`;
         } else {
-            waterHtml = `<button id="btn-log-water" class="action-btn">Log Water (500ml)</button>`;
+            waterHtml = `<button id="btn-log-water" class="action-btn" ${disabledStr}>Log Water (500ml)</button>`;
         }
 
         // 2. Wake Status
@@ -68,8 +72,8 @@ export class MorningSection extends Component {
         } else {
             wakeHtml = `
                 <div class="flex-row">
-                    <input type="time" id="input-wake" value="07:00" class="time-input">
-                    <button id="btn-save-wake" class="sm-btn">Save</button>
+                    <input type="time" id="input-wake" value="07:00" class="time-input" ${disabledStr}>
+                    <button id="btn-save-wake" class="sm-btn" ${disabledStr}>Save</button>
                 </div>
             `;
         }
@@ -82,7 +86,7 @@ export class MorningSection extends Component {
         } else {
             // Check time window (Simple check for now, can be advanced later with 3-day rule)
             // Just show button for now to prove interaction
-            coffeeHtml = `<button id="btn-log-coffee" class="action-btn secondary">Log Black Coffee</button>`;
+            coffeeHtml = `<button id="btn-log-coffee" class="action-btn secondary" ${disabledStr}>Log Black Coffee</button>`;
         }
 
         return `
