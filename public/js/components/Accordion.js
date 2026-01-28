@@ -11,7 +11,8 @@ export class Accordion extends Component {
         // Mount children into their containers
         this.sections.forEach(sec => {
             const container = this.element.querySelector(`#section-body-${sec.id}`);
-            if (container && this.store.state.ui.expandedSection === sec.id) {
+            const { ui } = this.facade.getSanitizedState();
+            if (container && ui && ui.expandedSection === sec.id) {
                 // Only mount if expanded to save cycles? 
                 // No, better to keep them mounted but hidden? 
                 // For "Zero-Scroll", we want DOM to be clean.
@@ -25,14 +26,17 @@ export class Accordion extends Component {
             const header = this.element.querySelector(`#section-header-${sec.id}`);
             if (header) {
                 header.addEventListener('click', () => {
-                    this.store.dispatch('SET_SECTION', sec.id);
+                    if (this.facade.setSection) {
+                        this.facade.setSection(sec.id);
+                    }
                 });
             }
         });
     }
 
     render() {
-        const expandedId = this.store.state.ui.expandedSection;
+        const { ui } = this.facade.getSanitizedState();
+        const expandedId = ui ? ui.expandedSection : null;
 
         return `
             <div id="accordion-container" style="

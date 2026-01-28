@@ -6,6 +6,12 @@ import { ActivitySection } from './components/sections/Activity.js';
 import { ShutdownSection } from './components/sections/Shutdown.js';
 import { ForensicSection } from './components/ForensicSection.js';
 
+import { MajorDeviations } from './components/MajorDeviations.js';
+import { DailyRecordCommit } from './components/DailyRecordCommit.js'; // NEW
+
+import { ExecutionFacade } from './facades/ExecutionFacade.js';
+import { EvaluationFacade } from './facades/EvaluationFacade.js';
+
 import { ShadowSync } from './supabase/shadow-sync.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,26 +19,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 1. Initialize Store
     const store = new Store();
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.127.0.1') {
         window.__STORE__ = store; // Debug access (Localhost only)
     }
 
-    // 2. Initialize Components
-    const header = new StickyHeader(store);
+    // 2. Initialize Facades
+    // ARCHITECTURE ADHERENCE: Components must NOT access store directly
+    const execFacade = new ExecutionFacade(store);
+    const evalFacade = new EvaluationFacade(store);
 
-    const morning = new MorningSection(store);
-    const activity = new ActivitySection(store);
-    const shutdown = new ShutdownSection(store);
-    const forensic = new ForensicSection(store);
+    // 3. Initialize Components with Facades
+    const header = new StickyHeader(execFacade); // Needs to Write viewDate
 
-    const accordion = new Accordion(store, [
-        { id: 'MORNING', title: 'Morning Routine', summary: 'Hydration · Wake', component: morning },
-        { id: 'ACTIVITY', title: 'Physical Activity', summary: 'Gym · Walks', component: activity },
-        { id: 'FORENSIC', title: 'Forensic Adherence', summary: 'Meals · Verification', component: forensic },
-        { id: 'SHUTDOWN', title: 'Shutdown Routine', summary: 'Sleep · Psyllium', component: shutdown }
+    const morning = new MorningSection(execFacade); // WRITE ONLY
+    const activity = new ActivitySection(execFacade); // WRITE ONLY
+    const shutdown = new ShutdownSection(execFacade); // WRITE ONLY
+
+    // Major Deviations (Write mostly, Read for checkboxes)
+    const majorDeviations = new MajorDeviations(execFacade);
+
+    // Forensic Wrapper (Nutrition Variance)
+    const forensic = new ForensicSection(execFacade, evalFacade);
+
+    // Daily Record Commit (Context + Archive)
+    const dailyCommit = new DailyRecordCommit(execFacade);
+
+    const accordion = new Accordion(execFacade, [
+        // CRITICAL ORDER: Morning -> Activity -> Nutrition -> MDR -> Commit -> Shutdown (or Shutdown -> Commit?)
+        // User: "Insert DailyRecordCommit component before Shutdown"
+        { id: 'MORNING', title: 'Morning Record', summary: 'Sleep · Hydration', component: morning },
+        { id: 'ACTIVITY', title: 'Activity Record', summary: 'Gym · Walks', component: activity },
+        { id: 'FORENSIC', title: 'Nutrition Variance', summary: 'Meals · Verification', component: forensic },
+        { id: 'DEVIATIONS', title: 'Major Deviations (MDR)', summary: 'Non-routine Events', component: majorDeviations },
+        { id: 'COMMIT', title: 'Daily Context & Archive', summary: 'Context · Seal Day', component: dailyCommit },
+        { id: 'SHUTDOWN', title: 'Shutdown Routine', summary: 'Psyllium · Bedtime', component: shutdown }
     ]);
 
-    // 3. Mount
+    // 4. Mount
     root.innerHTML = '';
 
     // Create Header Container
@@ -45,12 +68,13 @@ document.addEventListener('DOMContentLoaded', () => {
     accordionContainer.style.flex = "1";
     accordionContainer.style.display = "flex";
     accordionContainer.style.flexDirection = "column";
-    // accordionContainer.style.overflow = "hidden"; // Handled by Accordion itself? No, by styles.css mostly
     root.appendChild(accordionContainer);
     accordion.mount(accordionContainer);
 
-
-    // 4. Start Shadow Persistence
+    // 5. Start Shadow Persistence
     ShadowSync.init(store);
+
+    // 6. Default to Morning Record (User Request)
+    execFacade.setSection('MORNING');
 
 });

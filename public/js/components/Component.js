@@ -1,6 +1,6 @@
 export class Component {
-    constructor(store, props = {}) {
-        this.store = store;
+    constructor(facade, props = {}) {
+        this.facade = facade; // Renamed from store to facade to enforce pattern
         this.props = props;
         this.element = null;
 
@@ -10,8 +10,8 @@ export class Component {
 
     // Subscribe to specific store keys
     subscribe(keys) {
-        if (!this.store) return;
-        this.unsubscribe = this.store.subscribe((state, changes) => {
+        if (!this.facade) return;
+        this.unsubscribe = this.facade.subscribe(keys, (state, changes) => {
             // If any changed key is in our interest list, re-render
             if (keys.some(k => changes.includes(k)) || keys.includes('*')) {
                 this.update();

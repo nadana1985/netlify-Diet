@@ -14,7 +14,21 @@ export const Scoring = {
      * @param {boolean} isFinal - If true (past day), treat Pending as Skipped. If false (today), ignore Pending.
      */
     calculate(protocol, dailyLogs, supportLogs, isFinal = false) {
+        // GOVERNANCE: Runtime Access Check
+        if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+            try { throw new Error(); } catch (e) {
+                // If caller is NOT Store.js, warn. (Browser stack traces vary, this is a heuristic)
+                if (e.stack && !e.stack.includes('Store.js') && !e.stack.includes('scoring.js')) {
+                    console.warn('%cDWCS ARCHITECTURE VIOLATION: Scoring.calculate called from unauthorized source.', 'color: red; font-weight: bold;', e.stack);
+                }
+            }
+        }
+
         if (!protocol) return { total: 0, breakdown: [], version: "DWCS_v1" };
+
+        console.log("--- SCORING DEBUG ---");
+        console.log("Logs:", JSON.stringify(supportLogs));
+        console.log("Protocol Support:", protocol.support.map(i => i.id));
 
         let totalPoints = 0;
         let earnedPoints = 0;
@@ -115,7 +129,7 @@ export const Scoring = {
 
         let score = 0;
         if (totalPoints === 0) {
-            score = 0; // Start at 0 until first log.
+            score = 100; // Optimistic Start (User Request)
         } else {
             score = Math.round((earnedPoints / totalPoints) * 100);
         }

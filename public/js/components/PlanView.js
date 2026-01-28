@@ -7,11 +7,11 @@ export class PlanView extends Component {
     }
 
     render() {
-        const plan = this.store.state.plan;
+        const { plan, biologicalDate } = this.facade.getSanitizedState();
         if (!plan) return `<div style="padding:20px; text-align:center;">Loading Plan...</div>`;
 
         // Today's Date Calculation for visual highlighting
-        const todayBiological = new Date(this.store.state.biologicalDate);
+        const todayBiological = new Date(biologicalDate);
         const start = new Date(plan.plan_start_date);
 
         // Normalize time

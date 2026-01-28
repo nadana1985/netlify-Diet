@@ -1,53 +1,67 @@
 import { Component } from './Component.js';
 
 export class StickyHeader extends Component {
-    constructor(store) {
-        super(store);
-        this.subscribe(['dailyLogs', 'supportLogs', 'currentTime']);
+    constructor(facade) {
+        super(facade);
+        this.subscribe(['meta', 'currentTime', 'biologicalDate', 'viewDate']);
     }
 
-    calculateProgress() {
-        const protos = this.store.state.supportLogs.protocols || {};
-        const daily = this.store.state.dailyLogs.records || {};
+    onMount() {
+        // Event Delegation for robustness against re-renders
+        if (this.element) {
+            this.element.addEventListener('click', (e) => {
+                if (e.target.closest('#nav-prev')) {
+                    this.changeDate(-1);
+                } else if (e.target.closest('#nav-next')) {
+                    this.changeDate(1);
+                }
+            });
+        }
+    }
 
-        // Define required daily habits (simplified)
-        // 1. Water (taken)
-        // 2. Coffee (taken or violation)
-        // 3. Gym (completed)
-        // 4. Walks (lunch & dinner)
-        // 5. Psyllium (taken)
-        // 6. Sleep (bed & wake)
+    changeDate(delta) {
+        const { biologicalDate, viewDate } = this.facade.getSanitizedState();
 
-        let total = 0;
-        let done = 0;
+        // Robust Date Math (Avoid Timezone Offsets)
+        // 1. Parse YYYY-MM-DD
+        const base = viewDate || biologicalDate;
+        const parts = base.split('-').map(Number);
 
-        const check = (bool) => {
-            total++;
-            if (bool) done++;
-        };
+        // 2. Create UTC Date (Month is 0-indexed)
+        const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
 
-        check(protos['water'] && protos['water'].status === 'TAKEN');
-        check(protos['black_coffee'] && protos['black_coffee'].status); // Any status counts as "logged"
-        check(protos['gym'] && protos['gym'].status);
-        check(protos['walking_lunch'] && protos['walking_lunch'].status);
-        check(protos['walking_dinner'] && protos['walking_dinner'].status);
-        check(protos['psyllium'] && protos['psyllium'].status);
-        check(protos['sleep'] && protos['sleep'].bed_time && protos['sleep'].wake_time); // Needs both? Let's say separate
+        // 3. Add Delta Days
+        date.setUTCDate(date.getUTCDate() + delta);
 
-        // For simplicity, just count pending count
-        const pending = total - done;
-        const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+        // 4. Format back to YYYY-MM-DD
+        const newDate = date.toISOString().split('T')[0];
 
-        return { percent, pending };
+        // Prevent future navigation beyond biologicalDate
+        if (newDate > biologicalDate && delta > 0) return;
+
+        console.log(`[Nav] ${base} -> ${newDate} (limit: ${biologicalDate})`);
+
+        // Dispatch via Facade
+        if (this.facade.setViewDate) {
+            this.facade.setViewDate(newDate);
+        } else {
+            console.error("Facade missing setViewDate");
+        }
     }
 
     render() {
-        const { percent, pending } = this.calculateProgress();
-        const dateStr = this.store.state.biologicalDate;
+        const { meta, biologicalDate, viewDate } = this.facade.getSanitizedState();
+        const score = meta.score || { total: 0 };
+        const dateStr = viewDate || biologicalDate;
 
-        // Color logic
-        const barColor = percent === 100 ? 'var(--accent-color)' : '#3498db';
-        const pendingText = pending === 0 ? `<span style="color:var(--accent-color)">All Done!</span>` : `<strong>${pending}</strong> Pending`;
+        // Color logic based on Score (Authoritative)
+        let barColor = '#3498db';
+        if (score.total >= 80) barColor = 'var(--accent-color)'; // Green
+        else if (score.total >= 50) barColor = '#f1c40f'; // Yellow
+        else barColor = '#e74c3c'; // Red
+
+        const scoreText = `<strong>${score.total}</strong> DWCS`;
+        const isFuture = dateStr >= biologicalDate;
 
         return `
             <div id="sticky-header" style="
@@ -62,15 +76,18 @@ export class StickyHeader extends Component {
                 z-index: 100;
             ">
                 <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 5px;">
-                    <div style="font-size:0.9rem; font-weight:700; color:var(--primary-color);">
-                        ${dateStr}
+                    <div style="font-size:0.9rem; font-weight:700; color:var(--primary-color); display:flex; align-items:center; gap:10px;">
+                        <button id="nav-prev" style="border:none; background:none; cursor:pointer; font-weight:bold; color:#bdc3c7; padding:5px 10px;">&lt;</button>
+                        <span>${dateStr}</span>
+                        <button id="nav-next" style="border:none; background:none; cursor:pointer; font-weight:bold; color:${isFuture ? '#eee' : '#bdc3c7'}; padding:5px 10px;" ${isFuture ? 'disabled' : ''}>&gt;</button>
+                        ${meta.isReadOnly ? '<span style="font-size:0.7rem; background:#ecf0f1; padding:2px 5px; border-radius:4px; color:#7f8c8d; margin-left:5px;">ARCHIVED</span>' : ''}
                     </div>
                     <div style="font-size:0.85rem; color:var(--secondary-color);">
-                        <strong>${percent}%</strong> Done · ${pendingText}
+                        Current Score: ${scoreText}
                     </div>
                 </div>
                 
-                <!-- Progress Container -->
+                <!-- Score Bar -->
                 <div style="
                     height: 6px; 
                     width: 100%; 
@@ -80,7 +97,7 @@ export class StickyHeader extends Component {
                 ">
                     <div style="
                         height: 100%; 
-                        width: ${percent}%; 
+                        width: ${score.total}%; 
                         background: ${barColor}; 
                         transition: width 0.5s ease;
                     "></div>
